@@ -1,0 +1,1 @@
+newman run Booking.postman_collection.json -e BookingEnv.postman_environment.json  --reporters=cli,htmlextra

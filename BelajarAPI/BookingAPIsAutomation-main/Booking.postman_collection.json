@@ -1,0 +1,1455 @@
+{
+	"info": {
+		"_postman_id": "f46a5643-9d0c-4038-b584-c76e17861814",
+		"name": "Booking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28045329",
+		"_collection_link": "https://winter-flare-26655.postman.co/workspace/Booking~5e8a6989-bd21-403a-a31b-840bee1128bd/collection/28045329-f46a5643-9d0c-4038-b584-c76e17861814?action=share&source=collection_link&creator=28045329"
+	},
+	"item": [
+		{
+			"name": "1-CreateToken",
+			"item": [
+				{
+					"name": "1-CreateToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// pm.test(\"Status code is 200\", function () {\r",
+									"//     pm.response.to.have.status(200);\r",
+									"// });\r",
+									"\r",
+									"// //Validate Response Scehma\r",
+									"// pm.test(\"2-|1-CreateToken|Check that response body contains token\",function(){\r",
+									"//     pm.expect(JSON.parse(responseBody)).to.have.property(\"token\")\r",
+									"// })\r",
+									"\r",
+									"// //Check Token Datatybe\r",
+									"// pm.test(\"3-|1-CreateToken|Check token datatype||\"+typeof JSON.parse(responseBody).token,function(){\r",
+									"//     pm.expect(typeof JSON.parse(responseBody).token).to.be.equal(\"string\")\r",
+									"// })\r",
+									"\r",
+									"pm.collectionVariables.set(\"savetoken\",JSON.parse(responseBody).token);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"function generateRandomUsername(length = 8) {\r",
+									"  // Create an array of allowed characters.\r",
+									"  const allowedCharacters = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\";\r",
+									"\r",
+									"  // Generate a random username of the specified length.\r",
+									"  let username = \"\";\r",
+									"  for (let i = 0; i < length; i++) {\r",
+									"    username += allowedCharacters[Math.floor(Math.random() * allowedCharacters.length)];\r",
+									"  }\r",
+									"\r",
+									"  return username;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"username\",generateRandomUsername(length = 8));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\" : \"admin\",\r\n    \"password\" : \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/auth",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2-Booking",
+			"item": [
+				{
+					"name": "2-CreateBooking",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"//Generate Method To Send Random First Name\r",
+									"function generateFirstRandomName() {\r",
+									"  // Get the characters that can be used in names.\r",
+									"  const characters = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\";\r",
+									"\r",
+									"  // Get the length of the name.\r",
+									"  const nameLength = Math.floor(Math.random() * 10) + 3;\r",
+									"\r",
+									"  // Create an empty string to store the name.\r",
+									"  let name = \"\";\r",
+									"\r",
+									"\r",
+									"  // Loop through the name length and randomly add characters to the name.\r",
+									"  for (let i = 0; i < nameLength; i++) {\r",
+									"    name += characters.charAt(Math.floor(Math.random() * characters.length));\r",
+									"  }\r",
+									"\r",
+									"  // Return the randomly generated name.\r",
+									"  return name;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"Firstname\",generateFirstRandomName());\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"// //Generate Method To Send Random lastname Name\r",
+									"function generateLastRandomName() {\r",
+									"  // Get the characters that can be used in names.\r",
+									"  const characters = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\";\r",
+									"\r",
+									"  const nameLength = Math.floor(Math.random() * 10) + 3;\r",
+									"  let name = \"\";\r",
+									"\r",
+									"  for (let i = 0; i < nameLength; i++) {\r",
+									"    name += characters.charAt(Math.floor(Math.random() * characters.length));\r",
+									"  }\r",
+									"\r",
+									"  // Return the randomly generated name.\r",
+									"  return name;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"Lastname\",generateLastRandomName());\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Generate Method to return random price from 100 to 1000\r",
+									"function generateRandomPrice() {\r",
+									"  // Generate a random floating-point number between 0 and 1.\r",
+									"  const randomNumber = Math.random();\r",
+									"\r",
+									"  // Multiply the random number by the difference between 1000 and 100.\r",
+									"  const scaledRandomNumber = randomNumber * (1000 - 100);\r",
+									"\r",
+									"  // Round the scaled random number down to the nearest integer.\r",
+									"  const randomInt = Math.floor(scaledRandomNumber);\r",
+									"\r",
+									"  // Return the random integer as a price.\r",
+									"  return randomInt + 100;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"randomtotalprice\",generateRandomPrice());\r",
+									"\r",
+									"\r",
+									"//create method to generate check in date dueing 90s\r",
+									"function generateRandomCheckInDateDuring90sInFormatYearMonthDay() {\r",
+									"  // Get the start and end dates of the 90s.\r",
+									"  const startDate = new Date(\"1990-01-01\");\r",
+									"  const endDate = new Date(\"1999-12-31\");\r",
+									"\r",
+									"  // Generate a random check-in date within the 90s.\r",
+									"  const checkInDate = new Date(startDate.getTime() + Math.floor(Math.random() * (endDate.getTime() - startDate.getTime())));\r",
+									"\r",
+									"  // Format the check-in date.\r",
+									"  const formattedCheckInDate = checkInDate.toISOString().substring(0, 10);\r",
+									"\r",
+									"  // Return the check-in date.\r",
+									"  return formattedCheckInDate;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"checkin\",generateRandomCheckInDateDuring90sInFormatYearMonthDay())\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Create Method to generate checkout date during 90s\r",
+									"function generateRandomCheckoutDateDuring90sInFormatYearMonthDay() {\r",
+									"  // Get the start and end dates of the 90s.\r",
+									"  const startDate = new Date(\"1990-01-01\");\r",
+									"  const endDate = new Date(\"1999-12-31\");\r",
+									"\r",
+									"  // Generate a random check-in date within the 90s.\r",
+									"  const checkInDate = new Date(startDate.getTime() + Math.floor(Math.random() * (endDate.getTime() - startDate.getTime())));\r",
+									"\r",
+									"  // Format the check-in date.\r",
+									"  const formattedCheckInDate = checkInDate.toISOString().substring(0, 10);\r",
+									"\r",
+									"  // Return the check-in date.\r",
+									"  return formattedCheckInDate;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"checkout\",generateRandomCheckoutDateDuring90sInFormatYearMonthDay())\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Create method to generate true or false randomly\r",
+									"function generateRandomBoolean() {\r",
+									"  // Generate a random number between 0 and 1.\r",
+									"  const randomNumber = Math.random();\r",
+									"\r",
+									"  // If the random number is less than 0.5, return true.\r",
+									"  if (randomNumber < 0.5) {\r",
+									"    return true;\r",
+									"  }\r",
+									"\r",
+									"  // Otherwise, return false.\r",
+									"  return false;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"deposit\",generateRandomBoolean())\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"//create method to generate randomly one of the three meals\r",
+									"function generateRandomMeal() {\r",
+									"  // Create an array of the three meals.\r",
+									"  const meals = [\"Breakfast\", \"Lunch\", \"Dinner\"];\r",
+									"\r",
+									"  // Generate a random index from 0 to 2.\r",
+									"  const randomIndex = Math.floor(Math.random() * meals.length);\r",
+									"\r",
+									"  // Return the meal at the random index.\r",
+									"  return meals[randomIndex];\r",
+									"}\r",
+									"pm.collectionVariables.set(\"randommeal\", generateRandomMeal())"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"1-|3-GetBook|Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//Validate Response Body Schema\r",
+									"\r",
+									"pm.test(\"2-|2-CreateBooking| Check That response body includes first time\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).booking).to.have.property(\"firstname\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"3-|2-CreateBooking| Check That response body includes last name\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).booking).to.have.property(\"lastname\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"4-|2-CreateBooking| Check That response body includes Total Price\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).booking).to.have.property(\"totalprice\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"5-|2-CreateBooking| Check That response body includes depositpaid\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).booking).to.have.property(\"depositpaid\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"6-|2-CreateBooking| Check That response body includes bookingdates\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).booking).to.have.property(\"bookingdates\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"7-|2-CreateBooking| Check That response body includes Checkin\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).booking.bookingdates).to.have.property(\"checkin\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"8-|2-CreateBooking| Check That response body includes Checkout\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).booking.bookingdates).to.have.property(\"checkout\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"9-|3-GetBook| Check That booking dates includes checkout\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).booking).to.have.property(\"additionalneeds\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Check that response body has no null\r",
+									"pm.test(\"10-|3-GetBook| Check that first name value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).firstname).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"11-|3-GetBook| Check that last name value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).lastname).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"12-|3-GetBook| Check that totalprice value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).totalprice).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"13-|3-GetBook| Check that bookingdates value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Check Response Body Datatype\r",
+									"pm.test(\"16-|2-CreateBooking| Check datatype of first name in response||\"+typeof JSON.parse(responseBody).firstname,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).booking.firstname).to.be.equal(\"string\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"17-|2-CreateBooking| Check datatype of last name in response||\"+typeof JSON.parse(responseBody).lastname,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).booking.lastname).to.be.equal(\"string\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"18-|2-CreateBooking| Check datatype of total price in response||\"+typeof JSON.parse(responseBody).totalprice,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).booking.totalprice).to.be.equal(\"number\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"19-|2-CreateBooking| Check datatype of deposit paid in response||\"+typeof JSON.parse(responseBody).depositpaid,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).booking.depositpaid).to.be.equal(\"boolean\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.collectionVariables.set(\"BookingId\",JSON.parse(responseBody).bookingid);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"{{Firstname}}\",\r\n    \"lastname\" : \"{{Lastname}}\",\r\n    \"totalprice\" : {{randomtotalprice}},\r\n    \"depositpaid\" : {{deposit}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{checkin}}\",\r\n        \"checkout\" : \"{{checkout}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{randommeal}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseurl}}/booking",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3-GetBooking",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"1-|3-GetBook|Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//Validate Response Body Schema\r",
+									"\r",
+									"pm.test(\"2-|3-GetBook| Check That response body includes first time\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"firstname\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"3-|3-GetBook| Check That response body includes last time\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"lastname\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"4-|3-GetBook| Check That response body includes Total Price\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"totalprice\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"5-|3-GetBook| Check That response body includes depositpaid\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"depositpaid\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"6-|3-GetBook| Check That response body includes bookingdates\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"bookingdates\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"7-|3-GetBook| Check That booking dates includes checkin\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.have.property(\"checkin\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"8-|3-GetBook| Check That booking dates includes checkout\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.have.property(\"checkout\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"9-|3-GetBook| Check That booking dates includes checkout\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"additionalneeds\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Check that response body has no null\r",
+									"pm.test(\"10-|3-GetBook| Check that first name value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).firstname).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"11-|3-GetBook| Check that last name value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).lastname).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"12-|3-GetBook| Check that totalprice value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).totalprice).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"13-|3-GetBook| Check that bookingdates value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"14-|3-GetBook| Check that chekin of booking dates value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates.checkin).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"15-|3-GetBook| Check that checkout of booking dates value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates.checkout).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"\r",
+									"//Check Response Body Datatype\r",
+									"pm.test(\"16-|3-GetBook| Check datatype of first name in response||\"+typeof JSON.parse(responseBody).firstname,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).firstname).to.be.equal(\"string\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"17-|3-GetBook| Check datatype of last name in response||\"+typeof JSON.parse(responseBody).lastname,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).lastname).to.be.equal(\"string\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"18-|3-GetBook| Check datatype of total price in response||\"+typeof JSON.parse(responseBody).totalprice,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).totalprice).to.be.equal(\"number\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"19-|3-GetBook| Check datatype of deposit paid in response||\"+typeof JSON.parse(responseBody).depositpaid,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).depositpaid).to.be.equal(\"boolean\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"20-|3-GetBook| Check datatype of check in  in response||\"+typeof JSON.parse(responseBody).depositpaid.checkin,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).bookingdates.checkin).to.be.equal(\"string\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"20-|3-GetBook| Check datatype of check out in response||\"+typeof JSON.parse(responseBody).depositpaid.checkout,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).bookingdates.checkout).to.be.equal(\"string\")\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/booking/{{BookingId}}",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"booking",
+								"{{BookingId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4-GetBookingID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"1-|4-GetBookingID|Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//Validate Response Schema\r",
+									"for(var i=0;i<JSON.parse(responseBody).length;i++)\r",
+									"{\r",
+									"pm.test(\"2-|4-Check that response body includes booking id\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody)[i]).to.have.property(\"bookingid\")\r",
+									"})\r",
+									"}\r",
+									"\r",
+									"\r",
+									"//Chekc that response body has no null\r",
+									"for(var i=0;i<JSON.parse(responseBody).length;i++)\r",
+									"{\r",
+									"pm.test(\"3-|4-Check that response body properties !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody)[i].bookingid).to.not.equal(null)\r",
+									"})\r",
+									"}\r",
+									"\r",
+									"\r",
+									"//check response body values datatype\r",
+									"for(var i=0;i<JSON.parse(responseBody).length;i++)\r",
+									"{\r",
+									"pm.test(\"4-|4-Check that response bodyvales datatype\",function(){\r",
+									"\r",
+									"    pm.expect(typeof JSON.parse(responseBody)[i].bookingid).to.be.equal(\"number\")\r",
+									"})\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/booking",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5-UpdateBooking",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//Send saved token to request\r",
+									"pm.request.headers.add({\r",
+									"    key: 'Cookie',\r",
+									"    value: 'token= ' + pm.collectionVariables.get(\"savetoken\")\r",
+									"    // value: 'token= 06cadcf2b90101e'\r",
+									"});\r",
+									"console.log(pm.collectionVariables.get(\"savetoken\"))\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Generate Method To Send Random First Name\r",
+									"function generateFirstRandomName() {\r",
+									"  // Get the characters that can be used in names.\r",
+									"  const characters = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\";\r",
+									"\r",
+									"  // Get the length of the name.\r",
+									"  const nameLength = Math.floor(Math.random() * 10) + 3;\r",
+									"\r",
+									"  // Create an empty string to store the name.\r",
+									"  let name = \"\";\r",
+									"\r",
+									"\r",
+									"  // Loop through the name length and randomly add characters to the name.\r",
+									"  for (let i = 0; i < nameLength; i++) {\r",
+									"    name += characters.charAt(Math.floor(Math.random() * characters.length));\r",
+									"  }\r",
+									"\r",
+									"  // Return the randomly generated name.\r",
+									"  return name;\r",
+									"}\r",
+									"\r",
+									"pm.collectionVariables.set(\"Firstname\",generateFirstRandomName());\r",
+									"\r",
+									"// //Generate Method To Send Random lastname Name\r",
+									"function generateLastRandomName() {\r",
+									"  // Get the characters that can be used in names.\r",
+									"  const characters = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\";\r",
+									"\r",
+									"  const nameLength = Math.floor(Math.random() * 10) + 3;\r",
+									"  let name = \"\";\r",
+									"\r",
+									"  for (let i = 0; i < nameLength; i++) {\r",
+									"    name += characters.charAt(Math.floor(Math.random() * characters.length));\r",
+									"  }\r",
+									"\r",
+									"  // Return the randomly generated name.\r",
+									"  return name;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"Lastname\",generateLastRandomName());\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Generate Method to return random price from 100 to 1000\r",
+									"function generateRandomPrice() {\r",
+									"  // Generate a random floating-point number between 0 and 1.\r",
+									"  const randomNumber = Math.random();\r",
+									"\r",
+									"  // Multiply the random number by the difference between 1000 and 100.\r",
+									"  const scaledRandomNumber = randomNumber * (1000 - 100);\r",
+									"\r",
+									"  // Round the scaled random number down to the nearest integer.\r",
+									"  const randomInt = Math.floor(scaledRandomNumber);\r",
+									"\r",
+									"  // Return the random integer as a price.\r",
+									"  return randomInt + 100;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"randomtotalprice\",generateRandomPrice());\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"//create method to generate check in date dueing 90s\r",
+									"function generateRandomCheckInDateDuring90sInFormatYearMonthDay() {\r",
+									"  // Get the start and end dates of the 90s.\r",
+									"  const startDate = new Date(\"1990-01-01\");\r",
+									"  const endDate = new Date(\"1999-12-31\");\r",
+									"\r",
+									"  // Generate a random check-in date within the 90s.\r",
+									"  const checkInDate = new Date(startDate.getTime() + Math.floor(Math.random() * (endDate.getTime() - startDate.getTime())));\r",
+									"\r",
+									"  // Format the check-in date.\r",
+									"  const formattedCheckInDate = checkInDate.toISOString().substring(0, 10);\r",
+									"\r",
+									"  // Return the check-in date.\r",
+									"  return formattedCheckInDate;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"checkin\",generateRandomCheckInDateDuring90sInFormatYearMonthDay())\r",
+									"\r",
+									"\r",
+									"//Create Method to generate checkout date during 90s\r",
+									"function generateRandomCheckoutDateDuring90sInFormatYearMonthDay() {\r",
+									"  // Get the start and end dates of the 90s.\r",
+									"  const startDate = new Date(\"1990-01-01\");\r",
+									"  const endDate = new Date(\"1999-12-31\");\r",
+									"\r",
+									"  // Generate a random check-in date within the 90s.\r",
+									"  const checkInDate = new Date(startDate.getTime() + Math.floor(Math.random() * (endDate.getTime() - startDate.getTime())));\r",
+									"\r",
+									"  // Format the check-in date.\r",
+									"  const formattedCheckInDate = checkInDate.toISOString().substring(0, 10);\r",
+									"\r",
+									"  // Return the check-in date.\r",
+									"  return formattedCheckInDate;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"checkout\",generateRandomCheckoutDateDuring90sInFormatYearMonthDay())\r",
+									"\r",
+									"\r",
+									"//create method to generate randomly one of the three meals\r",
+									"function generateRandomMeal() {\r",
+									"  // Create an array of the three meals.\r",
+									"  const meals = [\"Breakfast\", \"Lunch\", \"Dinner\"];\r",
+									"\r",
+									"  // Generate a random index from 0 to 2.\r",
+									"  const randomIndex = Math.floor(Math.random() * meals.length);\r",
+									"\r",
+									"  // Return the meal at the random index.\r",
+									"  return meals[randomIndex];\r",
+									"}\r",
+									"pm.collectionVariables.set(\"randommeal\", generateRandomMeal())\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Create method to generate true or false randomly\r",
+									"function generateRandomBoolean() {\r",
+									"  // Generate a random number between 0 and 1.\r",
+									"  const randomNumber = Math.random();\r",
+									"\r",
+									"  // If the random number is less than 0.5, return true.\r",
+									"  if (randomNumber < 0.5) {\r",
+									"    return true;\r",
+									"  }\r",
+									"\r",
+									"  // Otherwise, return false.\r",
+									"  return false;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"deposit\",generateRandomBoolean())\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"1-|3-GetBook|Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//Validate Response Body Schema\r",
+									"\r",
+									"pm.test(\"2-|3-GetBook| Check That response body includes first time\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"firstname\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"3-|3-GetBook| Check That response body includes last time\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"lastname\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"4-|3-GetBook| Check That response body includes Total Price\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"totalprice\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"5-|3-GetBook| Check That response body includes depositpaid\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"depositpaid\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"6-|3-GetBook| Check That response body includes bookingdates\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"bookingdates\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"7-|3-GetBook| Check That booking dates includes checkin\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.have.property(\"checkin\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"8-|3-GetBook| Check That booking dates includes checkout\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.have.property(\"checkout\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"9-|3-GetBook| Check That booking dates includes checkout\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"additionalneeds\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Check that response body has no null\r",
+									"pm.test(\"10-|3-GetBook| Check that first name value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).firstname).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"11-|3-GetBook| Check that last name value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).lastname).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"12-|3-GetBook| Check that totalprice value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).totalprice).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"13-|3-GetBook| Check that bookingdates value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"14-|3-GetBook| Check that chekin of booking dates value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates.checkin).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"15-|3-GetBook| Check that checkout of booking dates value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates.checkout).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"\r",
+									"//Check Response Body Datatype\r",
+									"pm.test(\"16-|3-GetBook| Check datatype of first name in response||\"+typeof JSON.parse(responseBody).firstname,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).firstname).to.be.equal(\"string\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"17-|3-GetBook| Check datatype of last name in response||\"+typeof JSON.parse(responseBody).lastname,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).lastname).to.be.equal(\"string\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"18-|3-GetBook| Check datatype of total price in response||\"+typeof JSON.parse(responseBody).totalprice,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).totalprice).to.be.equal(\"number\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"19-|3-GetBook| Check datatype of deposit paid in response||\"+typeof JSON.parse(responseBody).depositpaid,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).depositpaid).to.be.equal(\"boolean\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"20-|3-GetBook| Check datatype of check in  in response||\"+typeof JSON.parse(responseBody).depositpaid.checkin,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).bookingdates.checkin).to.be.equal(\"string\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"20-|3-GetBook| Check datatype of check out in response||\"+typeof JSON.parse(responseBody).depositpaid.checkout,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).bookingdates.checkout).to.be.equal(\"string\")\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "in",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"{{Firstname}}\",\r\n    \"lastname\" : \"{{Lastname}}\",\r\n    \"totalprice\" : {{randomtotalprice}},\r\n    \"depositpaid\" : {{deposit}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{checkin}}\",\r\n        \"checkout\" : \"{{checkout}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{randommeal}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseurl}}/booking/{{BookingId}}",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"booking",
+								"{{BookingId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "6-CheckUpdateBooking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"1-|3-GetBook|Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//Validate Response Body Schema\r",
+									"\r",
+									"pm.test(\"2-|3-GetBook| Check That response body includes first time\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"firstname\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"3-|3-GetBook| Check That response body includes last time\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"lastname\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"4-|3-GetBook| Check That response body includes Total Price\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"totalprice\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"5-|3-GetBook| Check That response body includes depositpaid\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"depositpaid\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"6-|3-GetBook| Check That response body includes bookingdates\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"bookingdates\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"7-|3-GetBook| Check That booking dates includes checkin\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.have.property(\"checkin\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"8-|3-GetBook| Check That booking dates includes checkout\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.have.property(\"checkout\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"9-|3-GetBook| Check That booking dates includes checkout\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"additionalneeds\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Check that response body has no null\r",
+									"pm.test(\"10-|3-GetBook| Check that first name value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).firstname).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"11-|3-GetBook| Check that last name value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).lastname).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"12-|3-GetBook| Check that totalprice value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).totalprice).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"13-|3-GetBook| Check that bookingdates value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"14-|3-GetBook| Check that chekin of booking dates value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates.checkin).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"15-|3-GetBook| Check that checkout of booking dates value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates.checkout).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"\r",
+									"//Check Response Body Datatype\r",
+									"pm.test(\"16-|3-GetBook| Check datatype of first name in response||\"+typeof JSON.parse(responseBody).firstname,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).firstname).to.be.equal(\"string\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"17-|3-GetBook| Check datatype of last name in response||\"+typeof JSON.parse(responseBody).lastname,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).lastname).to.be.equal(\"string\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"18-|3-GetBook| Check datatype of total price in response||\"+typeof JSON.parse(responseBody).totalprice,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).totalprice).to.be.equal(\"number\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"19-|3-GetBook| Check datatype of deposit paid in response||\"+typeof JSON.parse(responseBody).depositpaid,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).depositpaid).to.be.equal(\"boolean\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"20-|3-GetBook| Check datatype of check in  in response||\"+typeof JSON.parse(responseBody).depositpaid.checkin,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).bookingdates.checkin).to.be.equal(\"string\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"20-|3-GetBook| Check datatype of check out in response||\"+typeof JSON.parse(responseBody).depositpaid.checkout,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).bookingdates.checkout).to.be.equal(\"string\")\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/booking/{{BookingId}}",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"booking",
+								"{{BookingId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "7-PartialUpdate",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.request.headers.add({\r",
+									"    key: 'Cookie',\r",
+									"    value: 'token= ' + pm.collectionVariables.get(\"savetoken\")\r",
+									"    // value: 'token= 06cadcf2b90101e'\r",
+									"});\r",
+									"console.log(pm.collectionVariables.get(\"savetoken\"))\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Generate Method To Send Random First Name\r",
+									"function generateFirstRandomName() {\r",
+									"  // Get the characters that can be used in names.\r",
+									"  const characters = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\";\r",
+									"\r",
+									"  // Get the length of the name.\r",
+									"  const nameLength = Math.floor(Math.random() * 10) + 3;\r",
+									"\r",
+									"  // Create an empty string to store the name.\r",
+									"  let name = \"\";\r",
+									"\r",
+									"\r",
+									"  // Loop through the name length and randomly add characters to the name.\r",
+									"  for (let i = 0; i < nameLength; i++) {\r",
+									"    name += characters.charAt(Math.floor(Math.random() * characters.length));\r",
+									"  }\r",
+									"\r",
+									"  // Return the randomly generated name.\r",
+									"  return name;\r",
+									"}\r",
+									"\r",
+									"pm.collectionVariables.set(\"Firstname\",generateFirstRandomName());\r",
+									"\r",
+									"// //Generate Method To Send Random lastname Name\r",
+									"function generateLastRandomName() {\r",
+									"  // Get the characters that can be used in names.\r",
+									"  const characters = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\";\r",
+									"\r",
+									"  const nameLength = Math.floor(Math.random() * 10) + 3;\r",
+									"  let name = \"\";\r",
+									"\r",
+									"  for (let i = 0; i < nameLength; i++) {\r",
+									"    name += characters.charAt(Math.floor(Math.random() * characters.length));\r",
+									"  }\r",
+									"\r",
+									"  // Return the randomly generated name.\r",
+									"  return name;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"Lastname\",generateLastRandomName());\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"1-|3-GetBook|Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//Validate Response Body Schema\r",
+									"\r",
+									"pm.test(\"2-|3-GetBook| Check That response body includes first time\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"firstname\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"3-|3-GetBook| Check That response body includes last time\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"lastname\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"4-|3-GetBook| Check That response body includes Total Price\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"totalprice\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"5-|3-GetBook| Check That response body includes depositpaid\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"depositpaid\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"6-|3-GetBook| Check That response body includes bookingdates\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"bookingdates\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"7-|3-GetBook| Check That booking dates includes checkin\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.have.property(\"checkin\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"8-|3-GetBook| Check That booking dates includes checkout\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.have.property(\"checkout\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"pm.test(\"9-|3-GetBook| Check That booking dates includes checkout\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property(\"additionalneeds\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"//Check that response body has no null\r",
+									"pm.test(\"10-|3-GetBook| Check that first name value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).firstname).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"11-|3-GetBook| Check that last name value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).lastname).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"12-|3-GetBook| Check that totalprice value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).totalprice).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"13-|3-GetBook| Check that bookingdates value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"14-|3-GetBook| Check that chekin of booking dates value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates.checkin).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"15-|3-GetBook| Check that checkout of booking dates value !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody).bookingdates.checkout).to.not.equal(null)\r",
+									"})\r",
+									"\r",
+									"\r",
+									"//Check Response Body Datatype\r",
+									"pm.test(\"16-|3-GetBook| Check datatype of first name in response||\"+typeof JSON.parse(responseBody).firstname,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).firstname).to.be.equal(\"string\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"17-|3-GetBook| Check datatype of last name in response||\"+typeof JSON.parse(responseBody).lastname,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).lastname).to.be.equal(\"string\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"18-|3-GetBook| Check datatype of total price in response||\"+typeof JSON.parse(responseBody).totalprice,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).totalprice).to.be.equal(\"number\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"19-|3-GetBook| Check datatype of deposit paid in response||\"+typeof JSON.parse(responseBody).depositpaid,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).depositpaid).to.be.equal(\"boolean\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"20-|3-GetBook| Check datatype of check in  in response||\"+typeof JSON.parse(responseBody).depositpaid.checkin,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).bookingdates.checkin).to.be.equal(\"string\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"20-|3-GetBook| Check datatype of check out in response||\"+typeof JSON.parse(responseBody).depositpaid.checkout,function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).bookingdates.checkout).to.be.equal(\"string\")\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\" : \"{{Firstname}}\",\r\n    \"lastname\" : \"{{Lastname}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseurl}}/booking/{{BookingId}}",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"booking",
+								"{{BookingId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "8-CheckPartialUpdate",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"1-|4-GetBookingID|Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"//Validate Response Schema\r",
+									"for(var i=0;i<JSON.parse(responseBody).length;i++)\r",
+									"{\r",
+									"pm.test(\"2-|4-Check that response body includes booking id\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody)[i]).to.have.property(\"bookingid\")\r",
+									"})\r",
+									"}\r",
+									"\r",
+									"\r",
+									"//Chekc that response body has no null\r",
+									"for(var i=0;i<JSON.parse(responseBody).length;i++)\r",
+									"{\r",
+									"pm.test(\"3-|4-Check that response body properties !=null\",function(){\r",
+									"\r",
+									"    pm.expect(JSON.parse(responseBody)[i].bookingid).to.not.equal(null)\r",
+									"})\r",
+									"}\r",
+									"\r",
+									"\r",
+									"//check response body values datatype\r",
+									"for(var i=0;i<JSON.parse(responseBody).length;i++)\r",
+									"{\r",
+									"pm.test(\"4-|4-Check that response bodyvales datatype\",function(){\r",
+									"\r",
+									"    pm.expect(typeof JSON.parse(responseBody)[i].bookingid).to.be.equal(\"number\")\r",
+									"})\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/booking",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "9-DeleteBooking",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.request.headers.add({\r",
+									"    key: 'Cookie',\r",
+									"    value: 'token= ' + pm.collectionVariables.get(\"savetoken\")\r",
+									"    // value: 'token= 06cadcf2b90101e'\r",
+									"});\r",
+									"console.log(pm.collectionVariables.get(\"savetoken\"))"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"1-|9-DeleteBooking|Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseurl}}/booking/{{Bookinid}}",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"booking",
+								"{{Bookinid}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3-Ping",
+			"item": [
+				{
+					"name": "10-HealthCheck",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"1-|8-HealthCheck|Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/ping",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"ping"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "savetoken",
+			"value": ""
+		},
+		{
+			"key": "Firstname",
+			"value": ""
+		},
+		{
+			"key": "Lastname",
+			"value": ""
+		},
+		{
+			"key": "randomtotalprice",
+			"value": ""
+		},
+		{
+			"key": "checkin",
+			"value": ""
+		},
+		{
+			"key": "checkout",
+			"value": ""
+		},
+		{
+			"key": "deposid",
+			"value": ""
+		},
+		{
+			"key": "deposit",
+			"value": ""
+		},
+		{
+			"key": "randommeal",
+			"value": ""
+		},
+		{
+			"key": "Bookinid",
+			"value": ""
+		},
+		{
+			"key": "username",
+			"value": ""
+		},
+		{
+			"key": "BookingId",
+			"value": ""
+		}
+	]
+}
